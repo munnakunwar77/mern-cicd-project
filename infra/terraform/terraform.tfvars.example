@@ -1,0 +1,5 @@
+aws_region  = "ap-south-1"
+project     = "mern-cicd"
+environment = "prod"
+# MongoDB Atlas (free M0 works) -> allow the NAT gateway's Elastic IP in Atlas Network Access
+mongodb_uri = "mongodb+srv://<user>:<password>@<cluster>.mongodb.net/mern_cicd?retryWrites=true&w=majority"

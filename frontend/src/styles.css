@@ -1,0 +1,52 @@
+:root {
+  --ink: #16212b;
+  --muted: #5d6b78;
+  --paper: #f6f8fa;
+  --panel: #ffffff;
+  --line: #d5dde4;
+  --go: #1f7a4d;
+  --stop: #b3402f;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 16px/1.5 "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+.sr-only {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+.board { max-width: 40rem; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+.board__head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.board__head h1 { margin: 0; font-size: 2rem; letter-spacing: -0.02em; }
+.board__build { margin: 0; color: var(--muted); font-size: 0.9rem; }
+.board__build strong { color: var(--go); font-variant-numeric: tabular-nums; }
+.board__form { display: flex; gap: 0.5rem; margin: 1.75rem 0 1rem; }
+.board__form input {
+  flex: 1; padding: 0.7rem 0.85rem; border: 1px solid var(--line);
+  border-radius: 6px; font: inherit; background: var(--panel);
+}
+button {
+  padding: 0.7rem 1rem; border: 0; border-radius: 6px; font: inherit; cursor: pointer;
+  background: var(--ink); color: #fff;
+}
+button:hover { background: #0c141b; }
+:focus-visible { outline: 3px solid #2f6fdb; outline-offset: 2px; }
+.board__error { color: var(--stop); margin: 0.5rem 0; }
+.board__empty { color: var(--muted); margin-top: 2rem; }
+.board__count { color: var(--muted); font-size: 0.9rem; margin: 1.5rem 0 0.5rem; }
+.board__list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.board__list li {
+  display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+  padding: 0.75rem 0; border-bottom: 1px solid var(--line);
+}
+.board__list label { display: flex; gap: 0.75rem; align-items: center; flex: 1; cursor: pointer; }
+.board__list li.is-done span { text-decoration: line-through; color: var(--muted); }
+.board__list li button { background: transparent; color: var(--stop); padding: 0.3rem 0.6rem; }
+.board__list li button:hover { background: #f8e6e2; }
+@media (prefers-reduced-motion: no-preference) {
+  button { transition: background 0.15s; }
+}

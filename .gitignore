@@ -1,0 +1,11 @@
+node_modules/
+dist/
+coverage/
+reports/
+.env
+*.log
+.scannerwork/
+# terraform
+infra/terraform/.terraform/
+infra/terraform/*.tfstate*
+infra/terraform/terraform.tfvars

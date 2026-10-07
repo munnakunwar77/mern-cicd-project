@@ -1,0 +1,51 @@
+# Jenkins + SonarQube for a single-node lab / PoC:
+#   docker compose -f docker-compose.jenkins.yml up -d --build
+# Jenkins:   http://localhost:8082      SonarQube: http://localhost:9000 (admin/admin)
+#
+# NOTE: the Docker socket is mounted so pipelines can build images.
+# That is root-equivalent on the host - fine for a lab, use dedicated agents in production.
+services:
+  jenkins:
+    build: ./jenkins
+    user: root
+    ports:
+      - "8082:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins-home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      JAVA_OPTS: "-Xmx1g"
+    restart: unless-stopped
+
+  sonarqube:
+    # image: sonarqube:25.12.0.117093-community
+    image: sonarqube:24.12.0.100206-community
+
+    depends_on: [sonar-db]
+    ports: ["9000:9000"]
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://sonar-db:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+    volumes:
+      - sonar-data:/opt/sonarqube/data
+      - sonar-extensions:/opt/sonarqube/extensions
+      - sonar-logs:/opt/sonarqube/logs
+    restart: unless-stopped
+
+  sonar-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      POSTGRES_DB: sonar
+    volumes: [sonar-db-data:/var/lib/postgresql/data]
+    restart: unless-stopped
+
+volumes:
+  jenkins-home:
+  sonar-data:
+  sonar-extensions:
+  sonar-logs:
+  sonar-db-data:
