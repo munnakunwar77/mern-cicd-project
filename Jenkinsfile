@@ -1,22 +1,17 @@
-/ ============================================================================
-//  MERN CI/CD pipeline - Jenkins declarative pipeline (multibranch)
-//
-//  CI  : install -> lint -> unit tests (+coverage) -> SonarQube + quality gate
-//        -> dependency audit -> docker build -> Trivy image scan
-//
-//  CD  : (main branch only) push to ECR -> approval -> blue-green OR canary
-//        deploy to ECS Fargate behind an ALB -> verify -> retire old version
-//
-//  Jenkins prerequisites:
-//    Tools        : NodeJS "NodeJS-20", SonarQube Scanner "SonarScanner"
-//    Sonar server : "sonarqube"  (Manage Jenkins > System)
-//    Credentials  : "aws-jenkins"
-//    On agent     : docker, aws cli v2, jq, curl, trivy
 // ============================================================================
-
-
-// ============================================================================
-// AWS credentials helper
+// MERN CI/CD pipeline - Jenkins declarative pipeline (multibranch)
+//
+// CI  : install -> lint -> unit tests (+coverage) -> SonarQube + quality gate
+//       -> dependency audit -> docker build -> Trivy image scan
+//
+// CD  : (main branch only) push to ECR -> approval -> blue-green OR canary
+//       deploy to ECS Fargate behind an ALB -> verify -> retire old version
+//
+// Jenkins prerequisites:
+//   Tools        : NodeJS "NodeJS-20", SonarQube Scanner "SonarScanner"
+//   Sonar server : "sonarqube"
+//   Credentials  : "aws-jenkins"
+//   On the agent : docker, aws cli v2, jq, curl, trivy
 // ============================================================================
 
 def withAws(Closure body) {
