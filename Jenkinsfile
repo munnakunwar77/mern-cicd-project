@@ -8,7 +8,7 @@
 //       deploy to ECS Fargate behind an ALB -> verify -> retire old version
 //
 // Jenkins prerequisites:
-//   Tools        : NodeJS "NodeJS-20", SonarQube Scanner "SonarScanner"
+//   Tools        : NodeJS "NodeJS-22", SonarQube Scanner "SonarScanner"
 //   Sonar server : "sonarqube"
 //   Credentials  : "aws-jenkins"
 //   On the agent : docker, aws cli v2, jq, curl, trivy
@@ -102,7 +102,7 @@ pipeline {
     // ========================================================================
 
     tools {
-        nodejs 'NodeJS-20'
+        nodejs 'NodeJS-22'
     }
 
 
