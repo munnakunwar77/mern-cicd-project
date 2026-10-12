@@ -128,9 +128,14 @@ pipeline {
         // ====================================================================
         stage('Checkout & Init') {
             steps {
-                checkout scm
-
                 script {
+                    // checkout scm returns the Git variables; in a plain "Pipeline script from SCM"
+                    // job BRANCH_NAME is not set, so take the branch from GIT_BRANCH (origin/main).
+                    def scmVars = checkout scm
+                    if (!env.BRANCH_NAME && scmVars?.GIT_BRANCH) {
+                        env.GIT_BRANCH = scmVars.GIT_BRANCH
+                    }
+
                     def sha = sh(returnStdout: true, script: 'git rev-parse --short=7 HEAD').trim()
 
                     env.IMAGE_TAG = "${env.BUILD_NUMBER}-${sha}"
