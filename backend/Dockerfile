@@ -6,6 +6,8 @@ RUN npm ci --omit=dev
 
 # ---- runtime stage ----
 FROM node:22-alpine
+# apply Alpine security patches released since the base image was built (keeps Trivy green)
+RUN apk upgrade --no-cache
 ENV NODE_ENV=production PORT=5000
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules

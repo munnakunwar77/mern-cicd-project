@@ -44,10 +44,10 @@ zero-downtime **blue-green** and **canary** releases to **AWS (ECS Fargate + ALB
 ## Quick start
 
 ```bash
-# 1. run the app locally  ->  http://localhost:8080
+# 1. run the app locally  ->  http://localhost:8085
 docker compose up --build
 
-# 2. start Jenkins + SonarQube  ->  http://localhost:8081 and http://localhost:9000
+# 2. start Jenkins + SonarQube  ->  http://localhost:8082 and http://localhost:9000
 docker compose -f docker-compose.jenkins.yml up -d --build
 
 # 3. create the AWS infrastructure

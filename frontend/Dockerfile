@@ -1,5 +1,5 @@
 # ---- build stage ----
-FROM node:22-alpine AS build
+FROM node:20-alpine AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
@@ -8,6 +8,8 @@ RUN npm run build
 
 # ---- runtime stage ----
 FROM nginx:stable-alpine
+# apply Alpine security patches released since the base image was built (keeps Trivy green)
+RUN apk upgrade --no-cache
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 80

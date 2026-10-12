@@ -77,7 +77,7 @@ or remove them in the same release that stops using them).
 | Need | Version / note |
 |---|---|
 | Docker + Docker Compose v2 | to run the app locally, Jenkins and SonarQube |
-| Node.js | 20 LTS (only needed if you run tests outside Docker) |
+| Node.js | 22 LTS (only needed if you run tests outside Docker; Jenkins uses the Node 22 inside its image) |
 | Git + a GitHub account | the pipeline is a *multibranch* job fed by GitHub |
 | AWS account | admin rights for the initial Terraform run |
 | AWS CLI v2 | configured with `aws configure` for the Terraform run |
@@ -110,8 +110,8 @@ git push -u origin main
 docker compose up --build
 ```
 
-* App: <http://localhost:8080> - add, complete and delete tasks.
-* API health: <http://localhost:5000/api/health>
+* App: <http://localhost:8085> - add, complete and delete tasks.
+* API health: <http://localhost:5006/api/health>
 
 The header on the page shows **"API build"**. Locally it says `local`; in AWS it shows the
 Jenkins image tag (`<build number>-<git sha>`). You will use it to *see* a blue-green or canary
@@ -172,7 +172,7 @@ docker compose -f docker-compose.jenkins.yml up -d --build
 docker compose -f docker-compose.jenkins.yml logs -f jenkins     # wait for the admin password
 ```
 
-* Jenkins → <http://localhost:8081>
+* Jenkins → <http://localhost:8082>
 * SonarQube → <http://localhost:9000> (first login `admin` / `admin`, you are asked to change it)
 
 The custom Jenkins image (`jenkins/Dockerfile`) already contains **docker CLI, AWS CLI v2, jq,
@@ -186,13 +186,14 @@ curl and Trivy**, and the plugins from `jenkins/plugins.txt`.
 1. Open Jenkins, paste the initial admin password
    (`docker compose -f docker-compose.jenkins.yml exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword`).
 2. Choose **Select plugins to install → None** (our plugins are already installed), create your admin user.
-3. Confirm the URL (`http://localhost:8081/`).
+3. Confirm the URL (`http://localhost:8082/`).
 
 ### 5.3 Configure tools (Manage Jenkins → Tools)
 
+Node.js 22, npm, docker, aws, jq and trivy are already inside the Jenkins image, so no NodeJS tool is needed.
+
 | Tool | Name (must match exactly) | Setting |
 |---|---|---|
-| NodeJS | `NodeJS-20` | Install automatically, version 20.x |
 | SonarQube Scanner | `SonarScanner` | Install automatically from Maven Central (latest) |
 
 ### 5.4 Connect Jenkins to SonarQube
@@ -206,7 +207,7 @@ curl and Trivy**, and the plugins from `jenkins/plugins.txt`.
    * Server authentication token: `sonar-token`
 4. **Webhook (required for the Quality Gate stage):** SonarQube → **Administration → Configuration →
    Webhooks → Create**: Name `jenkins`, URL `http://jenkins:8080/sonarqube-webhook/`.
-   Without it `waitForQualityGate` waits until its timeout.
+   Without it `waitForQualityGate` waits until its timeout. `docker-compose.jenkins.yml` already sets `sonar.validateWebhooks=false`, which SonarQube needs before it will call a private address like `jenkins:8080`.
 
 ### 5.5 (Optional) Tighten the Sonar quality gate
 
@@ -287,7 +288,7 @@ GitHub repo → **Settings → Webhooks → Add webhook**
 Payload URL `http://<your-jenkins-public-url>/github-webhook/` · content type `application/json` · event *Just the push event*.
 
 Jenkins on localhost is not reachable from GitHub. For a lab, expose it with a tunnel
-(`ngrok http 8081`) or skip the webhook and use **Scan Repository Now**.
+(`ngrok http 8082`) or skip the webhook and use **Scan Repository Now**.
 
 ---
 
@@ -474,7 +475,7 @@ aws logs tail /ecs/mern-cicd/backend --follow
 
 | Symptom | Likely cause / fix |
 |---|---|
-| `No such tool 'NodeJS-20'` | Tool name mismatch - see Part 5.3 |
+| `No such tool 'SonarScanner'` | Tool name mismatch - see Part 5.3 |
 | `Quality Gate` stage hangs | Sonar → Jenkins webhook missing (Part 5.4 step 4) |
 | Backend tests: `ECONNREFUSED` | Mongo container not ready or Jenkins cannot reach the container IP; check the "Backend (Jest + MongoDB)" log |
 | `docker: command not found` / permission denied on the socket | You are not using `jenkins/Dockerfile`, or the socket is not mounted |

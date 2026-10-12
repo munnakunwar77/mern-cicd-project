@@ -18,7 +18,9 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'lcov'],
       include: ['src/**/*.{js,jsx}'],
-      exclude: ['src/main.jsx']
+      exclude: ['src/main.jsx'],
+      // Same idea as backend/jest.config.js: the build fails if coverage drops.
+      thresholds: { statements: 80, branches: 70, functions: 80, lines: 80 }
     }
   }
 });

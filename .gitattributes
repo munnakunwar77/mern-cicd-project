@@ -1,0 +1,8 @@
+# Always use LF in the repository and on checkout. Windows editors/Git (autocrlf)
+# otherwise turn the Jenkinsfile and the *.sh scripts into CRLF, which breaks them on Linux.
+* text=auto eol=lf
+*.sh        text eol=lf
+Jenkinsfile text eol=lf
+*.png  binary
+*.jpg  binary
+*.ico  binary

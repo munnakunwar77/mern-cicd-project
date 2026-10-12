@@ -19,11 +19,18 @@ services:
     restart: unless-stopped
 
   sonarqube:
-    # image: sonarqube:25.12.0.117093-community
     image: sonarqube:24.12.0.100206-community
-
     depends_on: [sonar-db]
     ports: ["9000:9000"]
+    # Lab settings (passed as JVM -D options, see the SonarQube Docker docs):
+    #  - validateWebhooks=false : SonarQube blocks webhooks to private addresses by default.
+    #    Without this it cannot call http://jenkins:8080/sonarqube-webhook/ and the Jenkins
+    #    "Quality Gate" stage just waits until its timeout.
+    #  - es.bootstrap.checks.disable=true : lets the embedded Elasticsearch start on Docker
+    #    Desktop (Windows/macOS) without raising vm.max_map_count on the host.
+    command:
+      - "-Dsonar.validateWebhooks=false"
+      - "-Dsonar.es.bootstrap.checks.disable=true"
     environment:
       SONAR_JDBC_URL: jdbc:postgresql://sonar-db:5432/sonar
       SONAR_JDBC_USERNAME: sonar
