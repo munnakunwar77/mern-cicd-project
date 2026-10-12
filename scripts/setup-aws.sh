@@ -244,7 +244,7 @@ cmd_up() {
   fi
 
   rule="$(aws elbv2 describe-rules --listener-arn "$listener" \
-          --query 'Rules[?Priority==`10`].RuleArn | [0]' --output text 2>/dev/null || true)"
+          --query 'Rules[?Priority==`"10"`].RuleArn | [0]' --output text 2>/dev/null || true)"
   if none "$rule"; then
     aws elbv2 create-rule --listener-arn "$listener" --priority 10 \
       --conditions 'Field=path-pattern,Values=/api/*' \
